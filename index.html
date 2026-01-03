@@ -1,0 +1,346 @@
+﻿<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Learn AI</title>
+  <meta name="theme-color" content="#6366f1" />
+  <style>
+    :root{--bg:#f4f6fb;--card:#ffffff;--text:#0f172a;--muted:#64748b;--primary:#6366f1;--accent:#22c55e}
+    body.dark{--bg:#0b1220;--card:#111827;--text:#e5e7eb;--muted:#94a3b8;--primary:#818cf8;--accent:#22c55e}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto; background:var(--bg); color:var(--text)}
+    header{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:linear-gradient(135deg,var(--primary),#4f46e5);color:#fff}
+    header .right{display:flex;gap:8px}
+    header button{border:none;border-radius:10px;padding:8px 10px;cursor:pointer}
+    main{padding:12px}
+    nav{position:fixed;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding:8px;background:rgba(15,23,42,.9)}
+    nav button{border:none;border-radius:12px;padding:10px;color:#e5e7eb;background:#0b1220;cursor:pointer}
+    section{display:none;padding-bottom:84px}
+    section.active{display:block}
+    .card{background:var(--card);border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 10px 25px rgba(0,0,0,.12)}
+    h2,h3{margin:.2em 0 .6em 0}
+    small{color:var(--muted)}
+    input,textarea,select,button{width:100%;margin-top:8px;padding:10px;border-radius:12px;border:1px solid #cbd5f5;background:transparent;color:inherit}
+    textarea{min-height:90px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    ul{list-style:none;padding:0;margin:0}
+    li{padding:10px;border-radius:12px;background:rgba(99,102,241,.08);margin-top:6px}
+    .badge{display:inline-block;padding:4px 8px;border-radius:999px;background:rgba(34,197,94,.15);color:#16a34a;font-size:12px}
+    .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(99,102,241,.15);font-size:12px}
+    .btn{background:var(--primary);color:#fff;border:none}
+    .ghost{background:transparent;border:1px dashed #c7d2fe}
+  </style>
+</head>
+<body>
+<header>
+  <strong>🤖 Learn AI</strong>
+  <div class="right">
+    <button onclick="toggleDark()">🌙</button>
+  </div>
+</header><main>
+  <!-- LOGIN -->
+  <section id="login" class="active">
+    <div class="card">
+      <h3>🔐 Login</h3>
+      <input id="email" placeholder="Email" />
+      <input id="password" type="password" placeholder="Password" />
+      <button class="btn" onclick="login()">Login / Create Account</button>
+      <small>Demo-safe local login (upgradeable to Firebase/Auth later).</small>
+    </div>
+  </section>
+  <!-- AI -->
+  <section id="ai" class="active">
+    <div class="card">
+      <h3>🤖 AI Tutor</h3>
+      <small>School‑safe explanations, step‑by‑step.</small>
+      <textarea id="q" placeholder="Ask a question or paste notes…"></textarea>
+      <button class="btn" onclick="askAI()">Ask</button>
+      <p id="a"></p>
+      <small>Uses a secure server endpoint (see notes at bottom).</small>
+    </div>
+  </section>  <!-- Planner -->  <section id="planner">
+    <div class="card">
+      <h3>📝 Planner & Reminders</h3>
+      <input id="task" placeholder="Homework / task" />
+      <div class="row">
+        <select id="subject"><option>Math</option><option>Science</option><option>English</option><option>History</option><option>Other</option></select>
+        <input id="due" type="date" />
+      </div>
+      <button class="btn" onclick="addTask()">Add task</button>
+      <ul id="tasks"></ul>
+    </div>
+  </section>  <!-- Grades -->  <section id="grades">
+    <div class="card">
+      <h3>📊 Grades</h3>
+      <div class="row">
+        <input id="course" placeholder="Subject" />
+        <input id="grade" placeholder="Grade %" />
+      </div>
+      <button class="btn" onclick="addGrade()">Save grade</button>
+      <ul id="gradeList"></ul>
+    </div>
+  </section>  <!-- GPA -->  <section id="gpa">
+    <div class="card">
+      <h3>📈 GPA</h3>
+      <button class="btn" onclick="calcGPA()">Calculate</button>
+      <p id="gpaOut"></p>
+    </div>
+  </section>  <!-- Schedule -->  <section id="schedule">
+    <div class="card">
+      <h3>📅 Schedule</h3>
+      <div class="row">
+        <input id="day" placeholder="Day" />
+        <input id="className" placeholder="Class" />
+      </div>
+      <button class="btn" onclick="addClass()">Add</button>
+      <ul id="scheduleList"></ul>
+    </div>
+  </section>  <!-- Calculator -->  <section id="calc">
+    <div class="card">
+      <h3>🧮 Calculator</h3>
+      <input id="expr" placeholder="Example: 6*(3+2)" />
+      <button class="btn" onclick="calc()">Calculate</button>
+      <p id="res"></p>
+    </div>
+  </section>
+  <!-- FLASHCARDS -->
+  <section id="flashcards">
+    <div class="card">
+      <h3>🧠 Flashcards</h3>
+      <input id="fcQ" placeholder="Question" />
+      <input id="fcA" placeholder="Answer" />
+      <button class="btn" onclick="addCard()">Add Card</button>
+      <div id="cardBox" class="card"></div>
+      <button class="ghost" onclick="nextCard()">Next</button>
+    </div>
+  </section>  <!-- TIMER -->  <section id="timer">
+    <div class="card">
+      <h3>⏱️ Study Timer (Pomodoro)</h3>
+      <p id="time">25:00</p>
+      <button class="btn" onclick="startTimer()">Start</button>
+      <button class="ghost" onclick="resetTimer()">Reset</button>
+    </div>
+  </section>  <!-- NOTES -->  <section id="notes">
+    <div class="card">
+      <h3>📚 Notes</h3>
+      <textarea id="noteText" placeholder="Write study notes..."></textarea>
+      <button class="btn" onclick="saveNotes()">Save</button>
+      <p class="badge">Auto-saved</p>
+    </div>
+  </section>  <!-- DAILY QUOTE -->  <section id="quote">
+    <div class="card">
+      <h3>🌟 Daily Motivation</h3>
+      <p id="quoteText"></p>
+    </div>
+  </section>
+  <!-- STUDY BUDDY -->
+    <section id="buddy">
+    <div class="card">
+      <h3>🤝 Study Buddy</h3>
+      <p class="badge">School-safe • Moderated • No images • No links</p>
+      <input id="buddyCode" placeholder="Enter buddy code" />
+      <button class="btn" onclick="linkBuddy()">Link Buddy</button>
+      <p><strong>Your buddy code:</strong> <span id="myCode"></span></p>
+    </div><div class="card">
+  <h3>📊 Buddy Progress</h3>
+  <p>🔥 Buddy streak: <span id="buddyStreak">—</span></p>
+  <p>🎯 Buddy goal: <span id="buddyGoal">—</span></p>
+  <p>📝 Tasks completed today: <span id="buddyTasks">—</span></p>
+</div>
+
+<div class="card">
+  <h3>💬 Safe Buddy Chat</h3>
+  <small>Only study-friendly messages. Profanity, personal info, links are blocked.</small>
+  <ul id="chatList"></ul>
+  <select id="quickMsg">
+    <option value="">Quick messages…</option>
+    <option>Want to study for 25 minutes?</option>
+    <option>What subject are you studying?</option>
+    <option>Let’s complete our daily goal!</option>
+    <option>Good job keeping the streak!</option>
+    <option>Can you quiz me from flashcards?</option>
+  </select>
+  <input id="chatInput" placeholder="Type a study message" maxlength="120" />
+  <button class="btn" onclick="sendChat()">Send</button>
+</div>
+
+  </section><!-- DASHBOARD -->  <section id="dashboard">
+    <div class="card">
+      <h3>🎯 Daily Goals & Streak</h3>
+      <p>Study streak: <strong id="streak">0</strong> days 🔥</p>
+      <input id="goal" placeholder="Today's study goal" />
+      <button class="btn" onclick="saveGoal()">Save Goal</button>
+      <p id="goalView"></p>
+    </div><div class="card">
+  <h3>🏆 Achievements</h3>
+  <ul id="achievements"></ul>
+</div>
+
+  </section>  <!-- QUIZ MODE -->  <section id="quiz">
+    <div class="card">
+      <h3>🧪 Quiz Mode</h3>
+      <p id="quizQ"></p>
+      <input id="quizA" placeholder="Your answer" />
+      <button class="btn" onclick="checkQuiz()">Check</button>
+      <p id="quizResult"></p>
+    </div>
+  </section>  <!-- PROGRESS -->  <section id="progress">
+    <div class="card">
+      <h3>📊 Progress</h3>
+      <p>Total tasks: <span id="ptasks">0</span></p>
+      <p>Total flashcards: <span id="pcards">0</span></p>
+      <p>Subjects tracked: <span id="psub">0</span></p>
+    </div>
+  </section>
+</main><nav>
+  <button onclick="show('dashboard')">Home</button>
+  <button onclick="show('ai')">AI</button>
+  <button onclick="show('planner')">Planner</button>
+  <button onclick="show('flashcards')">Cards</button>
+  <button onclick="show('quiz')">Quiz</button>
+  <button onclick="show('buddy')">Buddy</button>
+</nav><script>
+  const $=id=>document.getElementById(id)
+  const show=id=>{document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
+  function gate(){ const u=localStorage.getItem('user'); if(u){ show('ai'); } else { show('login'); }}
+  const toggleDark=()=>{document.body.classList.toggle('dark');localStorage.setItem('dark',document.body.classList.contains('dark'))}
+  if(localStorage.getItem('dark')==='true')document.body.classList.add('dark')
+
+  // AUTH (local demo)
+  function login(){
+    const email=$('email').value.trim(); const pass=$('password').value;
+    if(!email||!pass) return alert('Enter email and password');
+    localStorage.setItem('user', JSON.stringify({email})); gate();
+  }
+  window.addEventListener('load', gate);
+
+  // AI (calls your secure server)
+  async function askAI(){
+    $('a').textContent='Thinking…'
+    try{
+      const r=await fetch('/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:$('q').value})})
+      const d=await r.json();$('a').textContent=d.answer
+    }catch{ $('a').textContent='AI unavailable (server not connected).'}
+  },body:JSON.stringify({prompt:$('q').value})})
+      const d=await r.json();$('a').textContent=d.answer
+    }catch{ $('a').textContent='AI unavailable (server not connected).'}
+  }
+
+  // Planner + reminders
+  let tasks=JSON.parse(localStorage.getItem('tasks')||'[]')
+  function renderTasks(){ $('tasks').innerHTML=''; tasks.forEach(t=>{const li=document.createElement('li'); li.innerHTML=`<strong>${t.task}</strong> <span class='pill'>${t.subject}</span><br><small>Due ${t.due}</small>`; $('tasks').appendChild(li)}) ; localStorage.setItem('tasks',JSON.stringify(tasks)) }
+  function addTask(){ if(!('Notification'in window))return alert('Notifications not supported'); Notification.requestPermission(); tasks.push({task:$('task').value,subject:$('subject').value,due:$('due').value}); renderTasks(); $('task').value=''}
+  renderTasks()
+
+  // Grades
+  let grades=JSON.parse(localStorage.getItem('grades')||'[]')
+  function renderGrades(){ $('gradeList').innerHTML=''; grades.forEach(g=>{const li=document.createElement('li'); li.textContent=`${g.course}: ${g.grade}%`; $('gradeList').appendChild(li)}); localStorage.setItem('grades',JSON.stringify(grades)) }
+  function addGrade(){ grades.push({course:$('course').value,grade:parseFloat($('grade').value)}); renderGrades(); $('course').value=''; $('grade').value=''}
+  renderGrades()
+
+  // GPA
+  function calcGPA(){ if(!grades.length){$('gpaOut').textContent='No grades yet'; return;} const avg=grades.reduce((a,b)=>a+b.grade,0)/grades.length; $('gpaOut').textContent=`GPA ≈ ${(avg/20).toFixed(2)} / 5.0` }
+
+  // Schedule
+  let schedule=JSON.parse(localStorage.getItem('schedule')||'[]')
+  function renderSchedule(){ $('scheduleList').innerHTML=''; schedule.forEach(c=>{const li=document.createElement('li'); li.textContent=`${c.day}: ${c.name}`; $('scheduleList').appendChild(li)}); localStorage.setItem('schedule',JSON.stringify(schedule)) }
+  function addClass(){ schedule.push({day:$('day').value,name:$('className').value}); renderSchedule(); $('day').value=''; $('className').value=''}
+  renderSchedule()
+
+  function calc(){ try{$('res').textContent=eval($('expr').value)}catch{$('res').textContent='Error'} }
+
+// FLASHCARDS
+let cards=JSON.parse(localStorage.getItem('cards')||'[]'),ci=0;
+function addCard(){ cards.push({q:fcQ.value,a:fcA.value}); localStorage.setItem('cards',JSON.stringify(cards)); fcQ.value=''; fcA.value=''; nextCard(); }
+function nextCard(){ if(!cards.length){cardBox.textContent='No cards yet';return;} const c=cards[ci%cards.length]; cardBox.textContent=c.q; cardBox.onclick=()=>cardBox.textContent=c.a; ci++; }
+
+// TIMER
+let t=1500, iv;
+function tick(){ if(t<=0){clearInterval(iv);alert('Time!');return;} t--; time.textContent=`${Math.floor(t/60)}:${('0'+t%60).slice(-2)}` }
+function startTimer(){ clearInterval(iv); iv=setInterval(tick,1000) }
+function resetTimer(){ clearInterval(iv); t=1500; time.textContent='25:00' }
+
+// NOTES
+noteText.value=localStorage.getItem('notes')||'';
+function saveNotes(){ localStorage.setItem('notes',noteText.value) }
+noteText.oninput=saveNotes;
+
+// DAILY QUOTES
+const quotes=[
+'Every day you learn is a step forward.',
+'Small progress is still progress.',
+'Focus today, succeed tomorrow.',
+'Learning is your superpower.',
+'Consistency beats talent.'
+];
+$('quoteText')?.textContent = quotes[new Date().getDate()%quotes.length];
+
+// DASHBOARD: streaks & goals
+let last=localStorage.getItem('lastDay');
+let streak=parseInt(localStorage.getItem('streak')||'0');
+const today=new Date().toDateString();
+if(last!==today){ streak++; localStorage.setItem('streak',streak); localStorage.setItem('lastDay',today); }
+$('streak').textContent=streak;
+function saveGoal(){ localStorage.setItem('goal',goal.value); goalView.textContent=goal.value; }
+goalView.textContent=localStorage.getItem('goal')||'';
+
+// ACHIEVEMENTS
+const ach=['First Login','5 Tasks Added','10 Flashcards','7-Day Streak'];
+const ul=$('achievements'); ach.forEach(a=>{const li=document.createElement('li'); li.textContent=a; ul.appendChild(li)});
+
+// QUIZ MODE (from flashcards)
+let qi=0;
+function loadQuiz(){ if(!cards.length){quizQ.textContent='Add flashcards first';return;} quizQ.textContent=cards[qi%cards.length].q; }
+function checkQuiz(){ const c=cards[qi%cards.length]; quizResult.textContent = quizA.value===c.a?'✅ Correct':'❌ Try again'; qi++; loadQuiz(); quizA.value=''; }
+loadQuiz();
+
+// PROGRESS STATS
+ptasks.textContent=tasks.length;
+pcards.textContent=cards.length;
+psub.textContent=new Set(tasks.map(t=>t.subject)).size;
+
+// ================= STUDY BUDDY LOGIC =================
+// SAFE CHAT RULES
+const banned=/https?:\/\/|www\.|@|(phone|address|snap|insta|tiktok)|(badword1|badword2)/i;
+let chat=JSON.parse(localStorage.getItem('chat')||'[]');
+function renderChat(){ const ul=$('chatList'); ul.innerHTML=''; chat.slice(-20).forEach(m=>{const li=document.createElement('li'); li.textContent=m; ul.appendChild(li)}); localStorage.setItem('chat',JSON.stringify(chat)); }
+function sendChat(){
+  const q=$('quickMsg').value; const t=$('chatInput').value.trim();
+  const msg=(q||t); if(!msg) return;
+  if(banned.test(msg)) return alert('Message blocked for safety.');
+  chat.push('You: '+msg);
+  $('chatInput').value=''; $('quickMsg').value=''; renderChat();
+}
+renderChat();
+
+
+const user=JSON.parse(localStorage.getItem('user')||'{}');
+if(!user.code){ user.code=Math.random().toString(36).slice(2,8).toUpperCase(); localStorage.setItem('user',JSON.stringify(user)); }
+$('myCode').textContent=user.code;
+
+function linkBuddy(){
+  const code=$('buddyCode').value.trim().toUpperCase();
+  if(code===user.code) return alert('You cannot link yourself');
+  localStorage.setItem('buddyCode',code);
+  alert('Buddy linked! (Demo mode)');
+  loadBuddy();
+}
+
+function loadBuddy(){
+  const b=JSON.parse(localStorage.getItem('buddyData')||'{}');
+  $('buddyStreak').textContent=b.streak||'0';
+  $('buddyGoal').textContent=b.goal||'—';
+  $('buddyTasks').textContent=b.tasks||'0';
+}
+
+// simulate buddy sync (demo-safe)
+function syncBuddy(){
+  const myData={
+    streak:streak,
+    goal:localStorage.getItem('goal')||'',
+    tasks:tasks.length
+  };
+  localStorage.setItem('buddyData',JSON.stringify(myData));
+}
+setInterval(syncBuddy,5000);
+loadBuddy();
